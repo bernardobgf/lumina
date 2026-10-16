@@ -1,9 +1,8 @@
 import type { Chat, Message, User } from "../types";
 
-const API_URL = (import.meta.env.API_URL ?? "http://localhost:3000").replace(
-  /\/$/,
-  "",
-);
+const API_URL = (
+  import.meta.env.API_URL ?? "https://lumina-3il0.onrender.com"
+).replace(/\/$/, "");
 let token = localStorage.getItem("lumina_token");
 export function setToken(value: string | null) {
   token = value;
