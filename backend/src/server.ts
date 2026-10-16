@@ -14,7 +14,7 @@ import type { AuthRequest } from "./types.js";
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const allowedOrigins = (
-  process.env.FRONTEND_ORIGIN || "https://lumina-53ek.vercel.app/"
+  process.env.FRONTEND_ORIGIN || "https://lumina-53ek.vercel.app"
 )
   .split(",")
   .map((v) => v.trim());
@@ -66,12 +66,10 @@ app.post(
         "INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email, role, created_at",
         [name, email, hash],
       );
-      return res
-        .status(201)
-        .json({
-          message: "Cadastro realizado com sucesso.",
-          user: result.rows[0],
-        });
+      return res.status(201).json({
+        message: "Cadastro realizado com sucesso.",
+        user: result.rows[0],
+      });
     } catch (error: any) {
       if (error?.code === "23505")
         return res
@@ -226,13 +224,11 @@ app.post(
           "Falha no provedor de IA:",
           error instanceof Error ? error.message : "unknown",
         );
-        return res
-          .status(502)
-          .json({
-            error:
-              "Não foi possível obter resposta da tutora agora. Sua mensagem foi salva; tente novamente mais tarde.",
-            userMessage: userMessage.rows[0],
-          });
+        return res.status(502).json({
+          error:
+            "Não foi possível obter resposta da tutora agora. Sua mensagem foi salva; tente novamente mais tarde.",
+          userMessage: userMessage.rows[0],
+        });
       }
       const assistantMessage = await pool.query(
         "INSERT INTO messages (chat_id, sender, content) VALUES ($1, $2, $3) RETURNING id, sender, content, created_at",
@@ -242,12 +238,10 @@ app.post(
         "UPDATE chats SET updated_at = NOW(), title = CASE WHEN title = $2 THEN LEFT($3, 50) ELSE title END WHERE id = $1",
         [req.params.chatId, "Nova conversa", content],
       );
-      return res
-        .status(201)
-        .json({
-          userMessage: userMessage.rows[0],
-          assistantMessage: assistantMessage.rows[0],
-        });
+      return res.status(201).json({
+        userMessage: userMessage.rows[0],
+        assistantMessage: assistantMessage.rows[0],
+      });
     } catch (error) {
       try {
         await client.query("ROLLBACK");
